@@ -8,4 +8,7 @@ class Comment :
         self.ip = ""
         self.date = datetime.today()
         self.body = ""
+        self.host = ""
+        self.reply = ""
+        self.rdate = ""
 
