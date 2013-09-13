@@ -126,6 +126,10 @@ class WretchImporter :
             comment.url = node.findtext("url")
             comment.date = datetime.strptime(node.findtext("date"), "%Y-%m-%d %H:%M:%S")
             comment.body = aid = node.findtext("text")
+            comment.host = node.findtext("blog_id")
+            comment.reply = node.findtext("reply")
+            if comment.reply != "" :
+                comment.rdate = datetime.strptime(node.findtext("reply_date"), "%Y-%m-%d %H:%M:%S")
 
             aid = node.findtext("article_id")
             try :

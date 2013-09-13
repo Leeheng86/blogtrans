@@ -62,6 +62,13 @@ def write_comment(feed, c, aid, cid) :
     thr.attrib["ref"]="tag:blogger.com,1999:blog-1.post-" + str(aid)
     thr.attrib["type"] = "text/html"
 
+    if c.reply != "" :
+        comment = Comment()
+        comment.date = c.rdate
+        comment.body = c.reply
+        comment.author = c.host
+        write_comment(feed, comment, aid, cid)
+
 def make_comment_task(feed, c, aid) :
     return lambda cid : write_comment(feed, c, aid, cid)
 
