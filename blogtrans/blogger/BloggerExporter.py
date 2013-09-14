@@ -45,6 +45,12 @@ def write_comment(feed, c, aid, cid) :
     link.attrib["type"]="application/atom+xml"
     link.attrib["href"]="http://www.blogger.com/feeds/1/comments/default/" + str(cid)
 
+    if c.prev_comment != "" :
+        link = SubElement(centry, "link")
+        link.attrib["rel"]="related"
+        link.attrib["type"]="application/atom+xml"
+        link.attrib["href"]="http://www.blogger.com/feeds/1/comments/default/" + str(c.prev_comment)
+
     author = SubElement(centry, "author")
     if c.author != "" :
         SubElement(author, "name").text = c.author
@@ -67,7 +73,8 @@ def write_comment(feed, c, aid, cid) :
         comment.date = c.rdate
         comment.body = c.reply
         comment.author = c.host
-        write_comment(feed, comment, aid, cid)
+        comment.prev_comment = cid
+        write_comment(feed, comment, aid, cid+1)
 
 def make_comment_task(feed, c, aid) :
     return lambda cid : write_comment(feed, c, aid, cid)
@@ -162,8 +169,16 @@ class BloggerExporter :
                 task = make_comment_task(feed, c, aid)
                 comment_tasks.append(task)
 
+        #   0 1 2 3 4 5  ...
+        #        +          
+        #   1 2 3 4 5 6  ...
+        #        =
+        #   1 3 5 7 9 11 ...
+        # reason for use 1 3 5 7 9 .... is left one for reply
+        accumulation = 1
         for i, task in enumerate(comment_tasks):
-            cid = i + 1
+            cid = i + accumulation
             task(cid)
+            accumulation += 1
 
         ElementTree(feed).write(self.filename, "utf-8")

@@ -11,4 +11,5 @@ class Comment :
         self.host = ""
         self.reply = ""
         self.rdate = ""
+        self.prev_comment = ""
 
